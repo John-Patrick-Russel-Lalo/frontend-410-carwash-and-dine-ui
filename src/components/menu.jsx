@@ -12,6 +12,9 @@ const menu = () => {
                     />
                     <h1 className="text-sm font-semibold mt-2">Spicy Noodles</h1>
                     <p className="text-orange-600 font-bold text-sm">₱150</p>
+                    <button className="mt-2 w-full bg-orange-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-60 transition">
+                        View Cart
+                    </button>
                 </article>
 
                 {/* Card 2 */}
@@ -22,6 +25,9 @@ const menu = () => {
                     />
                     <h1 className="text-sm font-semibold mt-2">Shrimp Pasta</h1>
                     <p className="text-orange-600 font-bold text-sm">₱180</p>
+                    <button className="mt-2 w-full bg-orange-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600 transition">
+                        View Cart
+                    </button>
                 </article>
 
                 {/* Card 3 */}
@@ -32,6 +38,9 @@ const menu = () => {
                     />
                     <h1 className="text-sm font-semibold mt-2">Vegetable Curry</h1>
                     <p className="text-orange-600 font-bold text-sm">₱120</p>
+                    <button className="mt-2 w-full bg-orange-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600 transition">
+                        View Cart
+                    </button>
                 </article>
 
                 {/* Card 4 */}
@@ -42,6 +51,9 @@ const menu = () => {
                     />
                     <h1 className="text-sm font-semibold mt-2">Mixed Salad</h1>
                     <p className="text-orange-600 font-bold text-sm">₱150</p>
+                    <button className="mt-2 w-full bg-orange-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600 transition">
+                        View Cart
+                    </button>
                 </article>
 
                 {/* Card 5 */}
@@ -52,6 +64,9 @@ const menu = () => {
                     />
                     <h1 className="text-sm font-semibold mt-2">Chicken Pasta Salad</h1>
                     <p className="text-orange-600 font-bold text-sm">₱150</p>
+                    <button className="mt-2 w-full bg-orange-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600 transition">
+                        View Cart
+                    </button>
                 </article>
 
                 {/* Card 6 */}
@@ -62,6 +77,9 @@ const menu = () => {
                     />
                     <h1 className="text-sm font-semibold mt-2">Beef Salad</h1>
                     <p className="text-orange-600 font-bold text-sm">₱120</p>
+                    <button className="mt-2 w-full bg-orange-500 text-white text-sm py-1.5 rounded-lg hover:bg-emerald-600 transition">
+                        View Cart
+                    </button>
                 </article>
 
             </section>
