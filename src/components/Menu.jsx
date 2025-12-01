@@ -96,7 +96,7 @@
 
 import { useState } from 'react';
 
-const ViewProduct = () => {
+const Menu = () => {
   const products = [
     {
       id: 1,
@@ -366,4 +366,4 @@ const ViewProduct = () => {
   );
 };
 
-export default ViewProduct;
+export default Menu;
