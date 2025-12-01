@@ -1,10 +1,13 @@
-import Menu from './components/menu.jsx';
-
+import Menu from './menu.jsx';
+import ViewProduct from './ViewProduct.jsx'
 function App() {
+
+   
 
   return (
     <>
         <Menu />
+        {/* <ViewProduct /> */}
     </>
   )
 }
