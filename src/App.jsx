@@ -1,15 +1,20 @@
-import Menu from './menu.jsx';
-import ViewProduct from './ViewProduct.jsx'
-import CustomerComments from './Commentsection.jsx';
+import { Routes, Route } from 'react-router-dom';
+import Menu from './components/Menu.jsx';
+import Landing from './components/Landing.jsx';
+import LoginPage from './components/LoginPage.jsx';
+import SignupPage from './components/SignupPage.jsx';
 
 function App() {
 
-   
-
   return (
     <>
-        <Menu />
-        {/* <ViewProduct /> */}
+        <Routes>
+          <Route path='/' element={<Landing />}/>
+          <Route path='/menu' element={<Menu />}/>
+          <Route path='/login' element={<LoginPage />}/>
+          <Route path='/signup' element={<SignupPage />}/>
+        </Routes>
+        <Menu></Menu>
     </>
   )
 }

@@ -96,7 +96,7 @@
 
 import { useState } from 'react';
 
-const ViewProduct = () => {
+const Menu = () => {
   const products = [
     {
       id: 1,
@@ -106,7 +106,8 @@ const ViewProduct = () => {
       originalPrice: 15.99,
       image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       rating: 4.5,
-      badge: "SPICY"
+      badge: "SPICY",
+      category: "meals"
     },
     {
       id: 2,
@@ -114,7 +115,8 @@ const ViewProduct = () => {
       description: "Freshly prepared sushi with premium ingredients. Includes salmon, tuna, shrimp, and avocado with perfectly seasoned rice.",
       price: 18.99,
       image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      rating: 4.8
+      rating: 4.8,
+      category: "meals"
     },
     {
       id: 3,
@@ -122,7 +124,8 @@ const ViewProduct = () => {
       description: "Colorful mix of fresh vegetables stir-fried with aromatic herbs and spices. A healthy and delicious vegetarian option.",
       price: 9.99,
       image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      rating: 4.3
+      rating: 4.3,
+      category: "meals"
     },
     {
       id: 4,
@@ -132,11 +135,31 @@ const ViewProduct = () => {
       originalPrice: 17.99,
       image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       rating: 4.6,
-      badge: "POPULAR"
+      badge: "POPULAR",
+      category: "meals"
+    },
+    {
+      id: 5,
+      name: "Fresh Orange Juice",
+      description: "Freshly squeezed orange juice with no added sugars.",
+      price: 4.99,
+      image: "https://images.unsplash.com/photo-1553541474-519d9d6ecf5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      rating: 4.7,
+      category: "drinks"
+    },
+    {
+      id: 6,
+      name: "Chocolate Cake",
+      description: "Rich and moist chocolate cake with chocolate ganache.",
+      price: 6.99,
+      image: "https://images.unsplash.com/photo-1563729784474-d77dbb73c3a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      rating: 4.9,
+      category: "desserts"
     }
   ];
 
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const renderRating = (rating) => {
     return (
@@ -161,7 +184,20 @@ const ViewProduct = () => {
   const CustomerComments = () => {
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([
-     
+      {
+        id: 1,
+        name: "John Doe",
+        comment: "Amazing food! The spicy noodles were exactly what I was looking for.",
+        date: "2023-05-15",
+        rating: 5
+      },
+      {
+        id: 2,
+        name: "Sarah Miller",
+        comment: "Great service and delicious food. Will definitely order again!",
+        date: "2023-05-12",
+        rating: 4
+      }
     ]);
     
     const handleSubmit = (e) => {
@@ -182,7 +218,6 @@ const ViewProduct = () => {
     return (
       <section className="mt-12 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl">
         <h2 className="text-2xl font-bold mb-4">Customer Comments</h2>
-        
         
         <form onSubmit={handleSubmit} className="mb-8">
           <textarea
@@ -234,10 +269,62 @@ const ViewProduct = () => {
     );
   };
 
+  // Filter products based on selected category
+  const filteredProducts = selectedCategory === 'all' 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Our Menu</h1>
+        
+        {/* Category Navigation */}
+        <section className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl mb-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Browse by Category</h2>
+          <div className="flex flex-wrap gap-3">
+            <button 
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-md hover:scale-105 border ${
+                selectedCategory === 'all' 
+                  ? 'bg-orange-500 text-white border-orange-500' 
+                  : 'bg-white text-gray-700 border-gray-200'
+              }`}
+            >
+              All Items
+            </button>
+            <button 
+              onClick={() => setSelectedCategory('meals')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-md hover:scale-105 border ${
+                selectedCategory === 'meals' 
+                  ? 'bg-orange-500 text-white border-orange-500' 
+                  : 'bg-white text-gray-700 border-gray-200'
+              }`}
+            >
+              Meals
+            </button>
+            <button 
+              onClick={() => setSelectedCategory('drinks')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-md hover:scale-105 border ${
+                selectedCategory === 'drinks' 
+                  ? 'bg-orange-500 text-white border-orange-500' 
+                  : 'bg-white text-gray-700 border-gray-200'
+              }`}
+            >
+              Drinks
+            </button>
+            <button 
+              onClick={() => setSelectedCategory('desserts')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-md hover:scale-105 border ${
+                selectedCategory === 'desserts' 
+                  ? 'bg-orange-500 text-white border-orange-500' 
+                  : 'bg-white text-gray-700 border-gray-200'
+              }`}
+            >
+              Desserts
+            </button>
+          </div>
+        </section>
         
         {selectedProduct ? (
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300">
@@ -313,49 +400,55 @@ const ViewProduct = () => {
           </div>
         ) : (
           <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                  <div className="relative">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    {product.badge && (
-                      <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                        {product.badge}
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-5">
-                    <h2 className="text-xl font-bold text-gray-800 mb-2">{product.name}</h2>
-                    {renderRating(product.rating)}
-                    
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {product.description}
-                    </p>
-                    
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <span className="text-xl font-bold text-orange-600">${product.price.toFixed(2)}</span>
-                        {product.originalPrice && (
-                          <span className="text-gray-500 line-through text-sm ml-1">${product.originalPrice.toFixed(2)}</span>
-                        )}
-                      </div>
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">No products found in this category.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredProducts.map((product) => (
+                  <div key={product.id} className="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div className="relative">
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      {product.badge && (
+                        <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          {product.badge}
+                        </div>
+                      )}
                     </div>
                     
-                    <button 
-                      onClick={() => setSelectedProduct(product)}
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 px-4 rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg"
-                    >
-                      View Product
-                    </button>
+                    <div className="p-5">
+                      <h2 className="text-xl font-bold text-gray-800 mb-2">{product.name}</h2>
+                      {renderRating(product.rating)}
+                      
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {product.description}
+                      </p>
+                      
+                      <div className="flex justify-between items-center mb-4">
+                        <div>
+                          <span className="text-xl font-bold text-orange-600">${product.price.toFixed(2)}</span>
+                          {product.originalPrice && (
+                            <span className="text-gray-500 line-through text-sm ml-1">${product.originalPrice.toFixed(2)}</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <button 
+                        onClick={() => setSelectedProduct(product)}
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 px-4 rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg"
+                      >
+                        View Product
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
             
             {/* Comments section in product list view */}
             <CustomerComments />
@@ -366,4 +459,4 @@ const ViewProduct = () => {
   );
 };
 
-export default ViewProduct;
+export default Menu;
