@@ -1,6 +1,4 @@
-import { Routes, Route } from "react-router-dom";
-
-
+import { Routes, Route } from 'react-router-dom';
 import Menu from './components/Menu.jsx';
 import Landing from './components/Landing.jsx';
 import LoginPage from './components/LoginPage.jsx';
