@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from "react-router-dom";
 
-const LandingPage = () => {
+import { Link } from 'react-router-dom';
+
+const Landing = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -40,11 +40,11 @@ const LandingPage = () => {
                 We are a new and innovative carwash and dining experience in Dayapan Lemery Batangas.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                  Start Free Trial
+                <button className="bg-gray-900 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                  Get Started
                 </button>
                 <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors">
-                  Watch Demo
+                  Learn More
                 </button>
               </div>
             </div>
@@ -57,7 +57,7 @@ const LandingPage = () => {
                       <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                         <img className='w-full h-autofill' src="" alt="Landing Image" />
                       </div>
-                      <p className="text-gray-600 font-medium">Application Preview</p>
+                      <p className="text-gray-900 font-medium">410 Carwash annd Dine</p>
                     </div>
                   </div>
                 </div>
@@ -72,29 +72,29 @@ const LandingPage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need to Succeed
+              Why Choose 410 Carwash and Dine?
             </h2>
-            <p className="text-lg text-gray-600">
-              Powerful features designed to streamline your development process
+            <p className="text-lg text-gray-900">
+              We are a new and innovative carwash and dining experience in Dayapan Lemery Batangas.
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: "Lightning Fast",
-                description: "Optimized performance with minimal load times and blazing-fast rendering",
-                icon: "⚡"
+                title: "Cooking Fast",
+                description: "Delicious meals prepared quickly without compromising quality",
+                icon: ""
               },
               {
-                title: "Developer Friendly",
-                description: "Intuitive tools and comprehensive documentation for seamless integration",
-                icon: "🛠️"
+                title: "Family Friendly",
+                description: "Friendly and welcoming environment for families and friends",
+                icon: ""
               },
               {
-                title: "Secure by Design",
-                description: "Enterprise-grade security with built-in protection mechanisms",
-                icon: "🔒"
+                title: "Delicious Food",
+                description: "A wide selection of delicious and healthy food options",
+                icon: ""
               }
             ].map((feature, index) => (
               <div key={index} className="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition-shadow">
@@ -108,16 +108,16 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">
+      <section className="py-20 bg-gradient-to-r from-gray-900 to-gray-700">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Get Started?
+            Ready to Order now?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of developers who have already transformed their workflow
+            Experience the best carwash and dining experience in Dayapan Lemery Batangas
           </p>
-          <button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-bold text-lg transition-colors">
-            Start Your Free Trial
+          <button className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-bold text-lg transition-colors">
+            Start Your Free Account
           </button>
         </div>
       </section>
@@ -128,16 +128,16 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
+                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <span className="text-black font-bold text-lg">410</span>
                 </div>
-                <span className="text-xl font-bold text-white">AetherIO</span>
+                <span className="text-xl font-bold text-white">410 Carwash and Dine</span>
               </div>
-              <p className="text-sm">Building the future of web development</p>
+              <p className="text-sm">A new and innovative carwash and dining experience in Dayapan Lemery Batangas</p>
             </div>
             
             {[
-              { title: "Product", links: ["Features", "Pricing", "Integrations"] },
+              { title: "Product", links: ["Foods", "Pricing", ] },
               { title: "Resources", links: ["Documentation", "Tutorials", "Blog"] },
               { title: "Company", links: ["About", "Careers", "Contact"] }
             ].map((column, index) => (
@@ -155,7 +155,7 @@ const LandingPage = () => {
           </div>
           
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm mb-4 md:mb-0">© 2025 AetherIO. All rights reserved.</p>
+            <p className="text-sm mb-4 md:mb-0">© 2025 410 Carwash and Dine. All rights reserved.</p>
             <div className="flex space-x-6">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
@@ -168,4 +168,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default Landing;
