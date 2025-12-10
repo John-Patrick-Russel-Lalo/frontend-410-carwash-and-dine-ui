@@ -1,7 +1,12 @@
+/* eslint-disable no-unused-vars */
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { isAuthenticated } from '../Auth.js';
 
 const Landing = () => {
+  const nav = useNavigate();
+  
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       {/* Header */}

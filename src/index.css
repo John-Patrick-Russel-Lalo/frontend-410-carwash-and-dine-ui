@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+
+@import 'leaflet/dist/leaflet.css';
+
+/* Fix for missing marker icons */
+.leaflet-container {
+  background: white;
+}
+
+/* Custom marker styles */
+.custom-marker {
+  background-color: #3B82F6;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
