@@ -1,6 +1,6 @@
 /* eslint-disable no-empty */
-// src/auth/authService.js
-const API_URL = "https://four10-c-and-d-backend-server.onrender.com";
+
+const API_URL = `${import.meta.env.VITE_SERVER_URL}`;
 
 
 
@@ -100,11 +100,18 @@ export async function refreshToken() {
   if (!res.ok) {
     removeAccessToken();
     removeCurrentUser();
+
     throw new Error("Refresh failed");
   }
 
   const data = await res.json();
   setAccessToken(data.accessToken);
+  const payload = JSON.parse(atob(data.accessToken.split(".")[1]));
+  setCurrentUser({
+    id: payload.id,
+    email: payload.email,
+    role: payload.role
+  });
   return data.accessToken;
 }
 
@@ -129,6 +136,7 @@ export async function apiCall(url, options = {}) {
     res = await fetch(url, {
       ...options,
       headers: {
+        "Content-Type": "application/json",
         ...(options.headers || {}),
         Authorization: `Bearer ${token}`,
       },

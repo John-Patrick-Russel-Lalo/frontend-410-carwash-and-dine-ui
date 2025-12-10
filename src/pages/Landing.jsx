@@ -6,11 +6,7 @@ import { isAuthenticated } from '../Auth.js';
 
 const Landing = () => {
   const nav = useNavigate();
-  useEffect(() => {
-    if (isAuthenticated()) {
-      nav("/menu");
-    }
-  })
+  
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       {/* Header */}

@@ -8,8 +8,15 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import NotFound from "./NotFound.jsx";
+
+
 import ShowProduct from "./pages/ShowProduct.jsx";
 import Cart from "./pages/Cart.jsx";
+import Orders from "./pages/Orders.jsx";
+import CustomerTrackingMap from "./pages/CustomerTrackingMap.jsx";
+import DriverTrackingMap from "./pages/DriverTrackingMap.jsx";
+import KitchenDashboard from "./pages/KitchenDashboard.jsx";
 
 function App() {
   // ADD THIS ⬇⬇⬇
@@ -74,7 +81,7 @@ function App() {
         <Route
           path="/menu"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['customer']}> 
               <Menu />
             </ProtectedRoute>
           }
@@ -83,7 +90,7 @@ function App() {
         <Route
           path="/cart"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['customer']}>
               <Cart />
             </ProtectedRoute>
           }
@@ -92,12 +99,57 @@ function App() {
         <Route
           path="/product/:id"
           element={
-            <ShowProduct products={products} renderRating={renderRating} />
+            <ProtectedRoute allowedRoles={['customer']}>
+              <ShowProduct products={products} renderRating={renderRating} />
+            </ProtectedRoute>
+          }
+        />
+
+          
+        
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute allowedRoles={['customer']}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/map"
+          element={
+            <ProtectedRoute allowedRoles={['customer']}>
+              <CustomerTrackingMap/>
+            </ProtectedRoute>
+          }
+        />
+
+
+
+        <Route
+          path="/drivermap"
+          element={
+            <ProtectedRoute allowedRoles={['driver']}>
+              <DriverTrackingMap/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/kitchen"
+          element={
+            <ProtectedRoute allowedRoles={['staff']}>
+              <KitchenDashboard/>
+            </ProtectedRoute>
           }
         />
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
       
     </>

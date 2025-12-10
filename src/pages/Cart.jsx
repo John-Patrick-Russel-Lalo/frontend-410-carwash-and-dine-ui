@@ -9,7 +9,7 @@ const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [shipping, setShipping] = useState(50);
-  const [taxRate, setTaxRate] = useState(0.12); // 12% tax
+  const [taxRate, setTaxRate] = useState(0); // 12% tax
 
   // Calculate totals
   const subtotal = cartItems.reduce(
@@ -40,14 +40,22 @@ const Cart = () => {
   }, []);
 
   // Update quantity
-  const updateQuantity = (id, newQuantity) => {
+  const updateQuantity = async (id, newQuantity) => {
     if (newQuantity < 1) return;
 
-    setCartItems(
-      cartItems.map((item) =>
+    // update UI instantly
+    setCartItems((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       )
     );
+
+    // send to server
+    await apiCall(`${import.meta.env.VITE_SERVER_URL}/cart/updateQuantity`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, quantity: newQuantity }),
+    });
   };
 
   // Remove item
@@ -68,6 +76,52 @@ const Cart = () => {
       setCartItems((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       console.error("Failed to remove item from cart:", err);
+    }
+  };
+
+  //   const placeOrder = async () => {
+  //   try {
+  //     const res = await apiCall(
+  //       `${import.meta.env.VITE_SERVER_URL}/cart/placeOrder`,
+  //       {
+  //         method: "POST",
+  //         credentials: "include"
+  //       }
+  //     );
+
+  //     if (!res.ok) throw new Error("Failed to place order");
+
+  //     setCartItems([]);
+
+  //   } catch (err) {
+  //     console.error("Failed to place order:", err);
+  //   }
+  // };
+  const placeOrder = async () => {
+    try {
+      const res = await apiCall(
+        `${import.meta.env.VITE_SERVER_URL}/cart/placeOrder`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: cartItems.map((item) => ({
+              menuId: item.item_id,
+              quantity: item.quantity,
+              price: Number(item.price) 
+            })),
+          }),
+        }
+      );
+      console.log(cartItems);
+      if (!res.ok) throw new Error("Failed to place order");
+
+      setCartItems([]);
+    } catch (err) {
+      console.error("Failed to place order:", err);
     }
   };
 
@@ -123,7 +177,10 @@ const Cart = () => {
                   </svg>
                 </div>
                 <p className="text-gray-500 text-lg mb-6">Your cart is empty</p>
-                <button className="bg-gradient-to-r from-gray-500 to-gray-900 text-white py-3 px-8 rounded-xl font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 shadow-md">
+                <button
+                  onClick={() => window.location.replace("/menu")}
+                  className="bg-gradient-to-r from-gray-500 to-gray-900 text-white py-3 px-8 rounded-xl font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 shadow-md"
+                >
                   Continue Shopping
                 </button>
               </div>
@@ -192,14 +249,7 @@ const Cart = () => {
                         <p className="text-gray-900 font-semibold">
                           ₱{(item.price * item.quantity).toLocaleString()}
                         </p>
-                        <button
-                          className="mt-2 w-full bg-gradient-to-r from-green-500 to-green-700 
-             text-white text-sm font-semibold py-2 px-4 rounded-lg 
-             shadow-md hover:from-green-600 hover:to-green-800 
-             transition-all duration-300"
-                        >
-                          Checkout
-                        </button>
+
                         <button
                           onClick={() => removeFromCart(item.id)}
                           className="text-sm text-red-500 font-medium px-3 py-1 rounded-lg 
@@ -207,7 +257,6 @@ const Cart = () => {
                         >
                           Remove
                         </button>
-                        
                       </div>
                     </div>
                   ))}
@@ -298,7 +347,10 @@ const Cart = () => {
                     >
                       Continue Shopping
                     </button>
-                    <button className="flex-1 bg-gradient-to-r from-gray-500 to-gray-900 text-white py-3 rounded-xl font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 shadow-md">
+                    <button
+                      onClick={() => placeOrder()}
+                      className="flex-1 bg-gradient-to-r from-gray-500 to-gray-900 text-white py-3 rounded-xl font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 shadow-md"
+                    >
                       Proceed to Checkout
                     </button>
                   </div>

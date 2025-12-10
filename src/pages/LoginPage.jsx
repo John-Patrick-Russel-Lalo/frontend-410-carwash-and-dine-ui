@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { isAuthenticated, login } from "../Auth.js";
+import { isAuthenticated, login, getCurrentUser } from "../Auth.js";
 
 export default function LoginPage() {
   const nav = useNavigate();
@@ -15,7 +15,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated()) {
-      nav("/menu");
+      if (getCurrentUser().role === "customer") {
+        nav("/menu");
+      } else if (getCurrentUser().role === "driver") {
+        nav("/drivermap");
+      }
     }
   }, [nav]);
 
@@ -32,7 +36,13 @@ export default function LoginPage() {
         sessionStorage.setItem("temporaryLogin", "1");
       }
 
-      nav("/menu");
+      if (isAuthenticated()) {
+        if (getCurrentUser().role === "customer") {
+          nav("/menu");
+        } else if (getCurrentUser().role === "driver") {
+          nav("/drivermap");
+        }
+      }
     } catch (err) {
       setError(err.message || "Login failed.");
     } finally {
@@ -44,7 +54,6 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
-          
           {/* Back Link */}
           <Link
             to="/"
@@ -124,7 +133,10 @@ export default function LoginPage() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-gray-900 focus:ring-gray-800 border-gray-300 rounded"
                 />
-                <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Remember me
                 </label>
               </div>
@@ -175,7 +187,9 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -217,11 +231,8 @@ export default function LoginPage() {
               Sign up
             </Link>
           </div>
-
         </div>
       </div>
     </div>
   );
 }
-
-
