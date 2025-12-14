@@ -39,7 +39,7 @@
 //   // Function to fetch route from driver to customer
 //   const fetchRoute = async (start, end) => {
 //     if (!start || !end) return;
-    
+
 //     setLoadingRoute(true);
 //     try {
 //       // Using OpenRouteService (free tier available)
@@ -47,22 +47,22 @@
 //       const response = await fetch(
 //         `https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson`
 //       );
-      
+
 //       if (!response.ok) throw new Error("Failed to fetch route");
-      
+
 //       const data = await response.json();
-      
+
 //       if (data.routes && data.routes.length > 0) {
 //         const route = data.routes[0];
-        
+
 //         // Extract coordinates from GeoJSON
 //         const coordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
 //         setRouteCoordinates(coordinates);
-        
+
 //         // Calculate distance in km
 //         const distanceKm = route.distance / 1000;
 //         setDistance(distanceKm);
-        
+
 //         // Calculate ETA (assuming average speed of 40 km/h for city driving)
 //         const durationMinutes = Math.round((route.duration / 60) * 1.2); // Add 20% buffer
 //         setEta(durationMinutes);
@@ -301,11 +301,9 @@
 
 // export default CustomerTrackingPage;
 
-
-
 /* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef, useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { getCurrentUser } from "../Auth.js";
@@ -329,6 +327,10 @@ const CustomerTrackingMap = ({ orderId }) => {
   const [driverLocation, setDriverLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const wsRef = useRef(null);
+
+  const [locationMode, setLocationMode] = useState("gps"); // "gps" | "manual"
+  const [deliveryLocation, setDeliveryLocation] = useState(null);
+  const [gpsError, setGpsError] = useState(null);
 
   // --------------------
   // WEBSOCKET (TRACK DRIVER)
@@ -372,6 +374,64 @@ const CustomerTrackingMap = ({ orderId }) => {
     return () => ws.close();
   }, [orderId, currentUser]);
 
+  useEffect(() => {
+    if (locationMode !== "gps") return;
+
+    if (!navigator.geolocation) {
+      setGpsError("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setDeliveryLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+        setGpsError(null);
+      },
+      (err) => {
+        console.error("GPS error:", err);
+        setGpsError("Failed to get GPS location");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      }
+    );
+  }, [locationMode]);
+
+  useEffect(() => {
+  if (!deliveryLocation || !wsRef.current) return;
+
+  if (wsRef.current.readyState === WebSocket.OPEN) {
+    wsRef.current.send(
+      JSON.stringify({
+        type: "deliveryLocation",
+        lat: deliveryLocation.lat,
+        lng: deliveryLocation.lng,
+      })
+    );
+
+    console.log("📤 Sent delivery location to server:", deliveryLocation);
+  }
+}, [deliveryLocation]);
+
+
+  const MapClickHandler = () => {
+    useMapEvents({
+      click(e) {
+        if (locationMode === "manual") {
+          setDeliveryLocation({
+            lat: e.latlng.lat,
+            lng: e.latlng.lng,
+          });
+        }
+      },
+    });
+    return null;
+  };
+
   // --------------------
   // ROLE GUARD
   // --------------------
@@ -392,36 +452,90 @@ const CustomerTrackingMap = ({ orderId }) => {
   }
 
   return (
-
     <>
-    <CustomerHeader/>
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">📍 Track Your Order</h1>
+      <CustomerHeader />
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">📍 Track Your Order</h1>
 
-        <div className="bg-white rounded-xl shadow overflow-hidden h-[500px]">
-          {driverLocation ? (
-            <MapContainer
-              center={[driverLocation.lat, driverLocation.lng]}
-              zoom={15}
-              className="h-full w-full"
+          <div className="flex gap-4 mb-4">
+            <button
+              onClick={() => setLocationMode("gps")}
+              className={`px-4 py-2 rounded-lg ${
+                locationMode === "gps"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200"
+              }`}
             >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Marker position={[driverLocation.lat, driverLocation.lng]}>
-                <Popup>🚗 Driver is here</Popup>
-              </Marker>
-            </MapContainer>
-          ) : (
-            <div className="h-full flex items-center justify-center text-gray-500">
-              🔄 Waiting for driver location…
-            </div>
-          )}
+              📍 Use GPS
+            </button>
+
+            <button
+              onClick={() => setLocationMode("manual")}
+              className={`px-4 py-2 rounded-lg ${
+                locationMode === "manual"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200"
+              }`}
+            >
+              📌 Pin on Map
+            </button>
+          </div>
+
+          {/* <div className="bg-white rounded-xl shadow overflow-hidden h-[500px]">
+            {driverLocation ? (
+              <MapContainer
+                center={[driverLocation.lat, driverLocation.lng]}
+                zoom={15}
+                className="h-full w-full"
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <Marker position={[driverLocation.lat, driverLocation.lng]}>
+                  <Popup>🚗 Driver is here</Popup>
+                </Marker>
+              </MapContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500">
+                🔄 Waiting for driver location…
+              </div>
+            )}
+          </div> */}
+
+          <div className="bg-white rounded-xl shadow overflow-hidden h-[500px]">
+            {deliveryLocation ? (
+              <MapContainer
+                center={[deliveryLocation.lat, deliveryLocation.lng]}
+                zoom={16}
+                className="h-full w-full"
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+                {locationMode === "manual" && <MapClickHandler />}
+
+                <Marker position={[deliveryLocation.lat, deliveryLocation.lng]}>
+                  <Popup>
+                    {locationMode === "gps"
+                      ? "📍 Your GPS location"
+                      : "📌 Pinned delivery location"}
+                  </Popup>
+                </Marker>
+
+                {driverLocation && (
+                  <Marker position={[driverLocation.lat, driverLocation.lng]}>
+                    <Popup>🚗 Driver</Popup>
+                  </Marker>
+                )}
+              </MapContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500">
+                {gpsError ? `❌ ${gpsError}` : "📍 Choose a delivery location"}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };
 
 export default CustomerTrackingMap;
-

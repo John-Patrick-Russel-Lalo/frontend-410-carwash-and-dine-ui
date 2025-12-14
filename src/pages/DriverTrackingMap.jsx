@@ -235,6 +235,11 @@ import StaffHeader from "../components/StaffHeader.jsx";
 
 import { apiCall, getCurrentUser } from "../Auth.js";
 
+
+const DEFAULT_CENTER = { lat: 14.5995, lng: 120.9842 };
+
+
+
 // Fix Leaflet icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -258,6 +263,8 @@ const DriverTrackingMap = () => {
   const [activeOrder, setActiveOrder] = useState(null);
   const [myLocation, setMyLocation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [customerLocation, setCustomerLocation] = useState(null);
+
 
   const watchIdRef = useRef(null);
   const pollRef = useRef(null);
@@ -301,105 +308,182 @@ const DriverTrackingMap = () => {
   // --------------------
   // WEBSOCKET (REGISTER DRIVER)
   // --------------------
+  // useEffect(() => {
+  //   if (!currentUser) return;
+
+  //   const ws = new WebSocket(
+  //     `${import.meta.env.VITE_SERVER_URL.replace("https", "wss")}/tracker`
+  //   );
+
+  //   ws.onopen = () => {
+  //     ws.send(
+  //       JSON.stringify({
+  //         type: "register",
+  //         userType: "driver",
+  //         userId: currentUser.id,
+  //       })
+  //     );
+  //     console.log("🟢 Driver WS connected");
+  //   };
+
+  //   ws.onerror = (err) => console.error("WS error:", err);
+  //   ws.onclose = () => console.log("🔴 Driver WS disconnected");
+
+  //   wsRef.current = ws;
+
+  //   return () => ws.close();
+  // }, [currentUser]);
+
+
+
   useEffect(() => {
-    if (!currentUser) return;
+  if (!currentUser) return;
 
-    const ws = new WebSocket(
-      `${import.meta.env.VITE_SERVER_URL.replace("https", "wss")}/tracker`
+  const ws = new WebSocket(
+    `${import.meta.env.VITE_SERVER_URL.replace("https", "wss")}/tracker`
+  );
+
+  ws.onopen = () => {
+    ws.send(
+      JSON.stringify({
+        type: "register",
+        userType: "driver",
+        userId: currentUser.id,
+      })
     );
+    console.log("🟢 Driver WS connected");
+  };
 
-    ws.onopen = () => {
-      ws.send(
-        JSON.stringify({
-          type: "register",
-          userType: "driver",
-          userId: currentUser.id,
-        })
-      );
-      console.log("🟢 Driver WS connected");
-    };
+  ws.onmessage = (msg) => {
+    try {
+      const data = JSON.parse(msg.data);
 
-    ws.onerror = (err) => console.error("WS error:", err);
-    ws.onclose = () => console.log("🔴 Driver WS disconnected");
+      if (data.type === "deliveryLocation") {
+        setCustomerLocation({
+          lat: data.lat,
+          lng: data.lng,
+        });
+      }
+    } catch (e) {
+      console.error("WS parse error", e);
+    }
+  };
 
-    wsRef.current = ws;
+  ws.onerror = console.error;
+  ws.onclose = () => console.log("🔴 Driver WS disconnected");
 
-    return () => ws.close();
-  }, [currentUser]);
+  wsRef.current = ws;
+  return () => ws.close();
+}, [currentUser]);
+
 
   // --------------------
   // GPS TRACKING → WS
   // --------------------
-  useEffect(() => {
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        const next = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        };
+useEffect(() => {
+  if (!navigator.geolocation) return;
 
-        setMyLocation((prev) =>
-          prev?.lat === next.lat && prev?.lng === next.lng ? prev : next
-        );
-
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-          wsRef.current.send(
-            JSON.stringify({
-              type: "location",
-              lat: next.lat,
-              lng: next.lng,
-            })
-          );
-        }
-      },
-      (err) => console.error("GPS Error:", err),
-      { enableHighAccuracy: true }
-    );
-
-    return () => navigator.geolocation.clearWatch(watchIdRef.current);
-  }, [currentUser, activeOrder]);
-
-
-  useEffect(() => {
-  if (!navigator.geolocation) {
-    console.error("❌ Geolocation not supported");
-    return;
-  }
-
-  console.log("🟡 Requesting GPS…");
-
-  const id = navigator.geolocation.watchPosition(
+  watchIdRef.current = navigator.geolocation.watchPosition(
     (pos) => {
-      console.log("🟢 GPS success:", pos.coords);
-
-      setMyLocation({
+      const loc = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
-      });
+      };
+
+      setMyLocation(loc);
+
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(
+          JSON.stringify({
+            type: "location",
+            lat: loc.lat,
+            lng: loc.lng,
+          })
+        );
+      }
     },
-    (err) => {
-      console.error("🔴 GPS error:", err.code, err.message);
-    },
+    (err) => console.error("GPS Error:", err),
     {
-      enableHighAccuracy: false, // 👈 IMPORTANT
-      timeout: 20000,
-      maximumAge: 0,
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 5000,
     }
   );
 
-  return () => navigator.geolocation.clearWatch(id);
+  return () => navigator.geolocation.clearWatch(watchIdRef.current);
 }, []);
 
-useEffect(() => {
-  const timer = setTimeout(() => {
-    if (!myLocation) {
-      console.warn("⚠️ GPS timeout → using fallback");
-      setMyLocation({ lat: 14.5995, lng: 120.9842 }); // Manila
-    }
-  }, 15000);
 
-  return () => clearTimeout(timer);
-}, [myLocation]);
+//   useEffect(() => {
+//     watchIdRef.current = navigator.geolocation.watchPosition(
+//       (pos) => {
+//         const next = {
+//           lat: pos.coords.latitude,
+//           lng: pos.coords.longitude,
+//         };
+
+//         setMyLocation((prev) =>
+//           prev?.lat === next.lat && prev?.lng === next.lng ? prev : next
+//         );
+
+//         if (wsRef.current?.readyState === WebSocket.OPEN) {
+//           wsRef.current.send(
+//             JSON.stringify({
+//               type: "location",
+//               lat: next.lat,
+//               lng: next.lng,
+//             })
+//           );
+//         }
+//       },
+//       (err) => console.error("GPS Error:", err),
+//       { enableHighAccuracy: true }
+//     );
+
+//     return () => navigator.geolocation.clearWatch(watchIdRef.current);
+//   }, [currentUser, activeOrder]);
+
+
+//   useEffect(() => {
+//   if (!navigator.geolocation) {
+//     console.error("❌ Geolocation not supported");
+//     return;
+//   }
+
+//   console.log("🟡 Requesting GPS…");
+
+//   const id = navigator.geolocation.watchPosition(
+//     (pos) => {
+//       console.log("🟢 GPS success:", pos.coords);
+
+//       setMyLocation({
+//         lat: pos.coords.latitude,
+//         lng: pos.coords.longitude,
+//       });
+//     },
+//     (err) => {
+//       console.error("🔴 GPS error:", err.code, err.message);
+//     },
+//     {
+//       enableHighAccuracy: false, // 👈 IMPORTANT
+//       timeout: 20000,
+//       maximumAge: 0,
+//     }
+//   );
+
+//   return () => navigator.geolocation.clearWatch(id);
+// }, []);
+
+// useEffect(() => {
+//   const timer = setTimeout(() => {
+//     if (!myLocation) {
+//       console.warn("⚠️ GPS timeout → using fallback");
+//       setMyLocation({ lat: 14.5995, lng: 120.9842 }); // Manila
+//     }
+//   }, 15000);
+
+//   return () => clearTimeout(timer);
+// }, [myLocation]);
 
 
 
@@ -426,6 +510,14 @@ useEffect(() => {
       console.error("Start delivery error:", err);
     }
   }, []);
+
+
+  const mapCenter = useMemo(() => {
+  if (myLocation) return [myLocation.lat, myLocation.lng];
+  if (customerLocation) return [customerLocation.lat, customerLocation.lng];
+  return [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng];
+}, [myLocation, customerLocation]);
+
 
   // --------------------
   // ROLE GUARD
@@ -455,24 +547,26 @@ useEffect(() => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* MAP */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow h-[450px]">
-            {myLocation ? (
-              <MapContainer
-                center={[myLocation.lat, myLocation.lng]}
-                zoom={15}
-                className="h-full w-full"
-              >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={[myLocation.lat, myLocation.lng]}>
-                  <Popup>🚗 You</Popup>
-                </Marker>
-              </MapContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center">
-                📍 Waiting for GPS…
-              </div>
-            )}
-          </div>
+          <MapContainer
+  center={mapCenter}
+  zoom={15}
+  className="lg:col-span-2 bg-white rounded-xl shadow h-[450px]"
+>
+  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+  {myLocation && (
+    <Marker position={[myLocation.lat, myLocation.lng]}>
+      <Popup>🚗 You</Popup>
+    </Marker>
+  )}
+
+  {customerLocation && (
+    <Marker position={[customerLocation.lat, customerLocation.lng]}>
+      <Popup>📦 Delivery Location</Popup>
+    </Marker>
+  )}
+</MapContainer>
+
 
           {/* ORDERS */}
           <div className="bg-white rounded-xl shadow p-4 space-y-4">
