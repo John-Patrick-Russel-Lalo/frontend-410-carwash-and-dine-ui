@@ -108,10 +108,12 @@ export async function refreshToken() {
   setAccessToken(data.accessToken);
   const payload = JSON.parse(atob(data.accessToken.split(".")[1]));
   setCurrentUser({
-    id: payload.id,
+    id: payload.userId,
     email: payload.email,
     role: payload.role
   });
+  console.log(payload)
+  console.log(getCurrentUser());
   return data.accessToken;
 }
 

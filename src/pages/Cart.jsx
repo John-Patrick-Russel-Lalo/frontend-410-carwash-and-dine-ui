@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 import { apiCall } from "../Auth.js";
 import CustomerHeader from "../components/CustomerHeader.jsx";
 
@@ -10,6 +11,8 @@ const Cart = () => {
   const [discount, setDiscount] = useState(0);
   const [shipping, setShipping] = useState(50);
   const [taxRate, setTaxRate] = useState(0); // 12% tax
+
+  const navigate = useNavigate();
 
   // Calculate totals
   const subtotal = cartItems.reduce(
@@ -120,6 +123,7 @@ const Cart = () => {
       if (!res.ok) throw new Error("Failed to place order");
 
       setCartItems([]);
+      navigate("/orders");
     } catch (err) {
       console.error("Failed to place order:", err);
     }
