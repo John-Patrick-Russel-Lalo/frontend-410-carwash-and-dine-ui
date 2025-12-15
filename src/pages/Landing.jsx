@@ -59,10 +59,10 @@ const Landing = () => {
                 <div className="bg-white rounded-xl p-8">
                   <div className="flex items-center justify-center h-64 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
                     <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                        <img className='w-full h-autofill' src="" alt="Landing Image" />
+                      <div className="inline-flex items-center justify-center w-full bg-blue-100 rounded-full">
+                        <img className='w-full h-autofill' src={`${import.meta.env.VITE_SERVER_URL}/images/TrayAndBilaos/Baboy/Pochero.png`} alt="Landing Image" />
                       </div>
-                      <p className="text-gray-900 font-medium">410 Carwash annd Dine</p>
+                     
                     </div>
                   </div>
                 </div>

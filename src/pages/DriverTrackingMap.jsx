@@ -268,7 +268,7 @@ const DriverTrackingMap = () => {
 
   const watchIdRef = useRef(null);
   const pollRef = useRef(null);
-  const wsRef = useRef(null); // 🧠 WS
+  const wsRef = useRef(null); 
 
   // --------------------
   // FETCH ORDERS (5s POLL)
@@ -355,19 +355,20 @@ const DriverTrackingMap = () => {
   };
 
   ws.onmessage = (msg) => {
-    try {
-      const data = JSON.parse(msg.data);
+  const data = JSON.parse(msg.data);
 
-      if (data.type === "deliveryLocation") {
-        setCustomerLocation({
-          lat: data.lat,
-          lng: data.lng,
-        });
-      }
-    } catch (e) {
-      console.error("WS parse error", e);
-    }
-  };
+  if (
+    data.type === "deliveryLocation" &&
+    activeOrder &&
+    data.orderId === activeOrder.id
+  ) {
+    setCustomerLocation({
+      lat: data.lat,
+      lng: data.lng,
+    });
+  }
+};
+
 
   ws.onerror = console.error;
   ws.onclose = () => console.log("🔴 Driver WS disconnected");
@@ -543,7 +544,7 @@ useEffect(() => {
     <StaffHeader/>
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">🚗 Driver Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-6"> Driver Dashboard</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* MAP */}
@@ -556,13 +557,13 @@ useEffect(() => {
 
   {myLocation && (
     <Marker position={[myLocation.lat, myLocation.lng]}>
-      <Popup>🚗 You</Popup>
+      <Popup>You</Popup>
     </Marker>
   )}
 
   {customerLocation && (
     <Marker position={[customerLocation.lat, customerLocation.lng]}>
-      <Popup>📦 Delivery Location</Popup>
+      <Popup>Delivery Location</Popup>
     </Marker>
   )}
 </MapContainer>
@@ -570,7 +571,7 @@ useEffect(() => {
 
           {/* ORDERS */}
           <div className="bg-white rounded-xl shadow p-4 space-y-4">
-            <h2 className="text-xl font-bold">📦 Assigned Orders</h2>
+            <h2 className="text-xl font-bold"> Assigned Orders</h2>
 
             {orders.map((order) => (
               <div
@@ -590,7 +591,7 @@ useEffect(() => {
                     onClick={() => startDelivery(order.id)}
                     className="mt-2 w-full bg-green-600 text-white py-2 rounded-lg"
                   >
-                    ▶ Start Delivery
+                   Start Delivery
                   </button>
                 )}
               </div>
