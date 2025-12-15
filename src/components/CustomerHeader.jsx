@@ -63,9 +63,6 @@ const CustomerHeader = () => {
             <a href="/orders" className={getLinkClass("/orders")}>
               Orders
             </a>
-            <a href="/history" className={getLinkClass("/history")}>
-              History
-            </a>
 
             <button
               onClick={handleLogout}
@@ -171,9 +168,6 @@ const CustomerHeader = () => {
               </a>
               <a href="/orders" className={getLinkClass("/orders")}>
                 Orders
-              </a>
-              <a href="/history" className={getLinkClass("/history")}>
-                History
               </a>
               <button
                 onClick={handleLogout}
