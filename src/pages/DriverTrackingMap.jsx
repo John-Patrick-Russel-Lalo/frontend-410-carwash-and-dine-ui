@@ -355,19 +355,20 @@ const DriverTrackingMap = () => {
   };
 
   ws.onmessage = (msg) => {
-    try {
-      const data = JSON.parse(msg.data);
+  const data = JSON.parse(msg.data);
 
-      if (data.type === "deliveryLocation") {
-        setCustomerLocation({
-          lat: data.lat,
-          lng: data.lng,
-        });
-      }
-    } catch (e) {
-      console.error("WS parse error", e);
-    }
-  };
+  if (
+    data.type === "deliveryLocation" &&
+    activeOrder &&
+    data.orderId === activeOrder.id
+  ) {
+    setCustomerLocation({
+      lat: data.lat,
+      lng: data.lng,
+    });
+  }
+};
+
 
   ws.onerror = console.error;
   ws.onclose = () => console.log("🔴 Driver WS disconnected");
