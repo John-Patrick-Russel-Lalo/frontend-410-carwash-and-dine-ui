@@ -337,7 +337,7 @@ const DriverTrackingMap = () => {
 
 
   useEffect(() => {
-  if (!currentUser) return;
+ 
 
   const ws = new WebSocket(
     `${import.meta.env.VITE_SERVER_URL.replace("https", "wss")}/tracker`
