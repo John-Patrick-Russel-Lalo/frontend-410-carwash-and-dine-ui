@@ -337,7 +337,7 @@ const DriverTrackingMap = () => {
 
 
   useEffect(() => {
- 
+  if (!currentUser) return;
 
   const ws = new WebSocket(
     `${import.meta.env.VITE_SERVER_URL.replace("https", "wss")}/tracker`
@@ -357,16 +357,16 @@ const DriverTrackingMap = () => {
   ws.onmessage = (msg) => {
   const data = JSON.parse(msg.data);
   console.log("Driver WS message received:", data);
+if (
+  data.type === "deliveryLocation" &&
+  data.orderId === activeOrder.id
+) {
+  setCustomerLocation({
+    lat: data.lat,
+    lng: data.lng,
+  });
+}
 
-  if (
-    data.type === "deliveryLocation"
-    
-  ) {
-    setCustomerLocation({
-      lat: data.lat,
-      lng: data.lng,
-    });
-  }
 };
 
 
@@ -491,6 +491,8 @@ useEffect(() => {
   // --------------------
   // START DELIVERY
   // --------------------
+
+
   const startDelivery = useCallback(async (orderId) => {
     try {
       const res = await apiCall(
