@@ -337,7 +337,7 @@ const DriverTrackingMap = () => {
 
 
   useEffect(() => {
-  if (!currentUser) return;
+ 
 
   const ws = new WebSocket(
     `${import.meta.env.VITE_SERVER_URL.replace("https", "wss")}/tracker`
@@ -356,6 +356,7 @@ const DriverTrackingMap = () => {
 
   ws.onmessage = (msg) => {
   const data = JSON.parse(msg.data);
+  console.log("Driver WS message received:", data);
 
   if (
     data.type === "deliveryLocation"
