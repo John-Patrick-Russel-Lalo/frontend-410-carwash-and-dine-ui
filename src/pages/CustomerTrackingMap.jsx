@@ -456,7 +456,7 @@ const CustomerTrackingMap = ({ orderId }) => {
       <CustomerHeader />
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">📍 Track Your Order</h1>
+          <h1 className="text-3xl font-bold mb-6"> Track Your Order</h1>
 
           <div className="flex gap-4 mb-4">
             <button
@@ -467,7 +467,7 @@ const CustomerTrackingMap = ({ orderId }) => {
                   : "bg-gray-200"
               }`}
             >
-              📍 Use GPS
+            Use GPS
             </button>
 
             <button
@@ -478,7 +478,7 @@ const CustomerTrackingMap = ({ orderId }) => {
                   : "bg-gray-200"
               }`}
             >
-              📌 Pin on Map
+              Pin on Map
             </button>
           </div>
 
@@ -515,20 +515,20 @@ const CustomerTrackingMap = ({ orderId }) => {
                 <Marker position={[deliveryLocation.lat, deliveryLocation.lng]}>
                   <Popup>
                     {locationMode === "gps"
-                      ? "📍 Your GPS location"
-                      : "📌 Pinned delivery location"}
+                      ? " Your GPS location"
+                      : " Pinned delivery location"}
                   </Popup>
                 </Marker>
 
                 {driverLocation && (
                   <Marker position={[driverLocation.lat, driverLocation.lng]}>
-                    <Popup>🚗 Driver</Popup>
+                    <Popup> Driver</Popup>
                   </Marker>
                 )}
               </MapContainer>
             ) : (
               <div className="h-full flex items-center justify-center text-gray-500">
-                {gpsError ? `❌ ${gpsError}` : "📍 Choose a delivery location"}
+                {gpsError ? ` ${gpsError}` : " Choose a delivery location"}
               </div>
             )}
           </div>
