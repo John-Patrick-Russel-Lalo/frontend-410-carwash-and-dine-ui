@@ -358,9 +358,8 @@ const DriverTrackingMap = () => {
   const data = JSON.parse(msg.data);
 
   if (
-    data.type === "deliveryLocation" &&
-    activeOrder &&
-    data.orderId === activeOrder.id
+    data.type === "deliveryLocation"
+    
   ) {
     setCustomerLocation({
       lat: data.lat,
