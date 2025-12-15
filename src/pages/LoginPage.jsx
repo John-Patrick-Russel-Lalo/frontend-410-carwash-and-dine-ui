@@ -41,6 +41,10 @@ export default function LoginPage() {
           nav("/menu");
         } else if (getCurrentUser().role === "driver") {
           nav("/drivermap");
+        } else if (getCurrentUser().role === "staff") {
+          nav("/kitchen");
+        } else if (getCurrentUser().role === "admin") {
+          nav("/adminkitchen");
         }
       }
     } catch (err) {
