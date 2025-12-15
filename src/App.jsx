@@ -17,6 +17,7 @@ import Orders from "./pages/Orders.jsx";
 import CustomerTrackingMap from "./pages/CustomerTrackingMap.jsx";
 import DriverTrackingMap from "./pages/DriverTrackingMap.jsx";
 import KitchenDashboard from "./pages/KitchenDashboard.jsx";
+import AdminKitchenDashboard from "./pages/AdminKitchenDashboard.jsx";
 
 function App() {
   // ADD THIS ⬇⬇⬇
@@ -126,6 +127,8 @@ function App() {
           }
         />
 
+      
+
 
 
         <Route
@@ -142,6 +145,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['staff']}>
               <KitchenDashboard/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/adminkitchen"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminKitchenDashboard/>
             </ProtectedRoute>
           }
         />
