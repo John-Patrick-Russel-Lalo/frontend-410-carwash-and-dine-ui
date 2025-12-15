@@ -356,6 +356,7 @@ const DriverTrackingMap = () => {
 
   ws.onmessage = (msg) => {
   const data = JSON.parse(msg.data);
+  console.log("Driver WS message received:", data);
 
   if (
     data.type === "deliveryLocation"
